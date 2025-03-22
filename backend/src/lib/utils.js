@@ -8,9 +8,10 @@ export const generateToken = (userId, res, days = 3) => {
     res.cookie("jwt", token, {
         maxAge: days * 24 * 60 * 60 * 1000, // Convert days to milliseconds
         httpOnly: true,
-        sameSite: true,
-        secure: process.env.NODE_ENV !== "development" // Use secure cookies in production
+        sameSite: "lax", // Ensures cookie is sent with same-site requests
+        secure: process.env.NODE_ENV === "production" // Secure only in production
     });
 
     return token;
 };
+

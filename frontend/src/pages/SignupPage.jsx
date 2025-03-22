@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MessageSquareMore, User, Lock, Mail, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import toast from "react-hot-toast";
+import { axiosInstance } from "../lib/axios";
 
 const SignupPage = () => {
   //show or hide password in the password field
@@ -38,6 +39,7 @@ const SignupPage = () => {
       toast.success("Account created successfully");
       setIsSigningUp(false);
     } catch (error) {
+      console.log(error);
       toast.error("Signup failed");
       setIsSigningUp(false);
     }
