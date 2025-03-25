@@ -1,22 +1,40 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { MessageSquareMore, Lock, Mail, Eye, EyeOff, Loader2 } from "lucide-react";
+import toast from 'react-hot-toast';
+import {
+  MessageSquareMore,
+  Lock,
+  Mail,
+  Eye,
+  EyeOff,
+  Loader2,
+} from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import { axiosInstance } from "../lib/axios";
 
 const LoginPage = () => {
   //show or hide password in the password field
-  const [showPassword , setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [formData , setFormData] = useState({email:"", password:""});
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const [isLogingIn, setIsLogingIn] = useState(false);
 
   //destructuring from the useAuthStore
-  const {login , isLogingIn } = useAuthStore();
+  const { saveUserToStore } = useAuthStore();
 
-  const handleSubmit = async(e) =>{
+  const handleSubmit = async (e) => {
+    setIsLogingIn(true);
     e.preventDefault();
-
-    login(formData)
-  }
+    try {
+      const res = await axiosInstance.post("/auth/login", formData);
+      saveUserToStore(res.data);
+      toast.success("Logged in successfully");
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
+    setIsLogingIn(false);
+  };
   return (
     <div className="h-screen px-4 sm:px-0 pt-24 sm:pt-32 lg:pt-44">
       {/* main container for the signup content */}
@@ -33,7 +51,10 @@ const LoginPage = () => {
           </p>
         </div>
         {/* form for input fields and submit button */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 sm:gap-6 w-full mt-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-3.5 sm:gap-6 w-full mt-4"
+        >
           <div className="form-control flex flex-col gap-0.5">
             <label className="hidden sm:flex label font-medium ml-1 text-white">
               <span className="label-text">Email</span>
@@ -47,7 +68,9 @@ const LoginPage = () => {
                 placeholder="email@email.com"
                 value={formData.email}
                 className="input focus:border-none focus:outline-1 w-full pl-12 bg-transparent"
-                onChange={(e)=> setFormData({...formData , email: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
               />
             </div>
           </div>
@@ -64,30 +87,34 @@ const LoginPage = () => {
                 placeholder="Type your password here"
                 value={formData.password}
                 className="input focus:border-none focus:outline-1 w-full pl-12 bg-transparent"
-                onChange={(e)=> setFormData({...formData , password: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
               />
               <button
                 type="button"
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={()=>setShowPassword(!showPassword)}
+                onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
                   <Eye className="size-5 text-base-content/40 cursor-pointer" />
-                ):(
+                ) : (
                   <EyeOff className="size-5 text-base-content/40 cursor-pointer" />
-                )
-
-                }
+                )}
               </button>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary w-full" disabled = {isLogingIn}>
+          <button
+            type="submit"
+            className="btn btn-primary w-full"
+            disabled={isLogingIn}
+          >
             {isLogingIn ? (
               <>
-                <Loader2 className="size-5 animate-spin"/>
+                <Loader2 className="size-5 animate-spin" />
                 Loading...
               </>
-            ):(
+            ) : (
               "Sign in"
             )}
           </button>
@@ -96,7 +123,9 @@ const LoginPage = () => {
         <div>
           <p className="text-sm sm:text-base text-base-content/60">
             Don't have an account?{" "}
-            <Link to='/signup' className="link link-primary">Create Account</Link>
+            <Link to="/signup" className="link link-primary">
+              Create Account
+            </Link>
           </p>
         </div>
       </div>

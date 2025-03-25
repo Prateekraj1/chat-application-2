@@ -38,8 +38,7 @@ const SignupPage = () => {
       saveUserToStore(res.data); // Send response data to Zustand store
       toast.success("Account created successfully");
       setIsSigningUp(false);
-    } catch (error) {
-      console.log(error);
+    } catch {
       toast.error("Signup failed");
       setIsSigningUp(false);
     }
@@ -72,7 +71,7 @@ const SignupPage = () => {
               </div>
               <input
                 type="text"
-                placeholder="Ankit Kumar"
+                placeholder="John Doe"
                 value={formData.fullName}
                 className="input w-full pl-12 bg-transparent focus:border-none focus:outline-1"
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}

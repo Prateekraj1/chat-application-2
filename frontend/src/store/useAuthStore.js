@@ -1,8 +1,7 @@
-import { create } from 'zustand'
-import { axiosInstance } from '../lib/axios.js'
-import toast from 'react-hot-toast';
+import { create } from 'zustand';
+import { axiosInstance } from '../lib/axios.js';
 import { io } from 'socket.io-client';
-const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const useAuthStore = create((set, get) => ({
     authUser: null,
     isLogingIn: false,
@@ -17,7 +16,7 @@ export const useAuthStore = create((set, get) => ({
             const res = await axiosInstance.get('/auth/check');
 
             set({ authUser: res.data });
-            get().connetSocket();
+            get().connectSocket();
         } catch (error) {
             console.log("Some error occured in checkAuth", error);
             set({ authUser: null });
@@ -26,53 +25,17 @@ export const useAuthStore = create((set, get) => ({
         }
     },
 
-    saveUserToStore: async (userData) => {
+    saveUserToStore: (userData) => {
         set({ authUser: userData });
         get().connectSocket();
     },
 
-    login: async (data) => {
-        set({ isLogingIn: true });
-        try {
-            const res = await axiosInstance.post("/auth/login", data);
-            set({ authUser: res.data });
-            toast.success("Logged in successfully");
-            get().connetSocket();
-        } catch (error) {
-            // console.log("Some error occured in the login function in useAuthStore" + error.message);
-            toast.error(error.response.data.message);
-        } finally {
-            set({ isLogingIn: false });
-        }
+    logoutUser: () => {
+        set({ authUser: null });
+        get().disconnectSocket();
     },
 
-    updateProfile: async (data) => {
-        try {
-            set({ isUpdatingProfile: true });
-            const res = await axiosInstance.put("/auth/updateProfile", data);
-            set({ authUser: res.data });
-            toast.success("Profile uploaded successfully");
-        } catch (error) {
-            console.log("Error in uplaoding the profile image " + error.message);
-            toast.error(error.response.data.message);
-        } finally {
-            set({ isUpdatingProfile: false });
-        }
-    },
-
-    logout: async () => {
-        try {
-            const res = await axiosInstance.post("/auth/logout");
-            set({ authUser: null });
-            toast.success("Logged out successfully");
-            get().disconnectSocket();
-
-        } catch (error) {
-            toast.error(error.response.data.message);
-        }
-    },
-
-    connetSocket: () => {
+    connectSocket: () => {
         const { authUser } = get();
         if (!authUser || get().socket?.connected) return;
 
