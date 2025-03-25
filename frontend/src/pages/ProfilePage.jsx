@@ -1,17 +1,27 @@
 import React, { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { Camera, Mail, User , LogOut, UserCheck} from "lucide-react";
+import { Camera, Mail, User, LogOut } from "lucide-react";
 import { useChatStore } from "../store/useChatStore";
+import { axiosInstance } from "../lib/axios";
+import toast from 'react-hot-toast';
 
 const ProfilePage = () => {
-  const { authUser, isUpdatingProfile, updateProfile , logout} = useAuthStore();
-  const {setSelectedUser} = useChatStore();
+  const { authUser, saveUserToStore, logoutUser } = useAuthStore();
+  const { setSelectedUser } = useChatStore();
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleLogout = () =>{
-    logout();
-    setSelectedUser(null);
-  }
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.post("/auth/logout");
+      setSelectedUser(null);
+      logoutUser();
+      toast.success("Logged out successfully");
+    } catch (error) {
+      toast.error("Something went wrong Try again !!");
+    }
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -27,6 +37,20 @@ const ProfilePage = () => {
       setSelectedImage(base64FormatImageUrl);
       await updateProfile({ profilePic: base64FormatImageUrl });
     };
+  };
+
+  const updateProfile = async (data) => {
+    setIsUpdatingProfile(true);
+    try {
+      const res = await axiosInstance.put("/auth/updateProfile", data);
+      saveUserToStore(res.data);
+      toast.success("Profile uploaded successfully");
+    } catch (error) {
+      console.log("Error in uplaoding the profile image " + error.message);
+      toast.error(error.response.data.message);
+    } finally {
+      setIsUpdatingProfile(false);
+    }
   };
 
   return (

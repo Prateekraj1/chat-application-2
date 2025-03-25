@@ -111,6 +111,7 @@ export const updateProfile = async (req, res) => {
 
         res.status(200).json(updateUser)
     } catch (error) {
+        console.log("Error in uplaoding the profile image " + error.message);
         res.status(500).json({ message: "Internal Server Error" })
     }
 }
