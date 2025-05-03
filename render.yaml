@@ -2,7 +2,7 @@ services:
   - type: web
     name: chatme-backend
     env: node
-    rootDir: back-end
+    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     envVars:
@@ -14,7 +14,7 @@ services:
   - type: web
     name: chatme-frontend
     env: node
-    rootDir: front-end
+    rootDir: frontend
     buildCommand: npm install --legacy-peer-deps && npm run build
     startCommand: npm start
     envVars:
