@@ -1,20 +1,11 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-import autoprefixer from 'autoprefixer';
+import { defineConfig } from 'vite'
+import tailwindcss from '@tailwindcss/vite'
+import react from '@vitejs/plugin-react'
 
+// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  css: {
-    postcss: {
-      plugins: [autoprefixer()],
-    },
-  },
-  server: {
-    host: '0.0.0.0',
-    port: 4173,
-  },
-  preview: {
-    allowedHosts: ['chat-application-2-elpg.onrender.com'],
-  },
-});
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+})
