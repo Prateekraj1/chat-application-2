@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: chatme-backend
+    env: node
+    rootDir: back-end
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGO_URI
+        value: your_mongo_uri_here
+      - key: JWT_SECRET
+        value: PrateekSecretKey
+
+  - type: web
+    name: chatme-frontend
+    env: node
+    rootDir: front-end
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_CONSUMET_API_URL
+        value: https://consumet-instance-alpha.vercel.app
+      - key: NEXT_PUBLIC_CONSUMET_PROVIDER
+        value: gogoanime
+      - key: NEXT_PUBLIC_ANILIST_API_URL
+        value: https://consumet-instance-alpha.vercel.app/meta/anilist
+      - key: NEXT_MONGODB_URI
+        value: mongodb://localhost:27017/
+      - key: JWT_SECRET
+        value: PrateekSecretKey
