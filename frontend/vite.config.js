@@ -10,4 +10,8 @@ export default defineConfig({
       plugins: [autoprefixer()],
     },
   },
+  server: {
+    host: '0.0.0.0',
+    port: 4173,
+  },
 });
